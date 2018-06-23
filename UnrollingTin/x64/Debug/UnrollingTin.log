@@ -1,3 +1,4 @@
 ﻿  UnrollingTin.cpp
+c:\users\delia\source\repos\unrollingtin\unrollingtin\unrollingtin.cpp(278): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   UnrollingTin.vcxproj -> C:\Users\delia\source\repos\UnrollingTin\x64\Debug\UnrollingTin.exe
   UnrollingTin.vcxproj -> C:\Users\delia\source\repos\UnrollingTin\x64\Debug\UnrollingTin.pdb (Partial PDB)
