@@ -10,6 +10,8 @@
 using namespace std;
 using namespace cv;
 
+//create feature finding algorithm. KAZE/BRISK
+Ptr<BRISK> alg;
 bool sortByResponse(const KeyPoint &first, const KeyPoint &second)
 {
 	return first.response > second.response;
@@ -22,8 +24,7 @@ vector<uchar> extract_features(string image_path, int vector_size = 32)
 	vector<uchar> flatted;
 	try 
 	{
-		//create feature finding algorithm. KAZE/BRISK
-		Ptr<KAZE> alg = KAZE::create();
+		
 		vector<KeyPoint> keypoints;
 		//Finding Image keypoints
 		alg->detect(image, keypoints);
@@ -90,17 +91,19 @@ string match(map<string, vector<uchar>>* result, string image_path, int topn = 5
 	vector<uchar> features = extract_features(image_path);
 	map<string, double> matchPerImage;//strng is image name, double is distance
 									  //compares the images 
+	pair<string, double> isBiggestMatch = std::make_pair("start", 0);
 	for (auto element : *result)
 	{
 		double distance = cosine_similarity(&features, &element.second);
 		matchPerImage[element.first] = distance;
+		if (distance > isBiggestMatch.second)
+		{
+			isBiggestMatch = std::make_pair(element.first, distance);
+		}
 	}
-	//Gets the smallest distance
-	string nameImage = (*min_element(matchPerImage.begin(), matchPerImage.end(), sortByDistanceAscending)).first;
-
-
-
-	return nameImage;
+	//Gets the biggest Value-> best match
+	string nameImageBestFit = isBiggestMatch.first;
+	return nameImageBestFit;
 
 }
 
@@ -108,22 +111,20 @@ int main()
 {
 	string path = "C:\\Users\\delia\\Desktop\\P4\\Dosenbilder23\\beer_WOB\\cutted\\";
 	string imagespath = "C:\\Users\\delia\\Desktop\\P4\\Dosenbilder23\\beer_WOB\\cutted";
-	string pathFirst= path+"2cut.jpg";
+	string pathFirst= path+"3cut.jpg";
 	
 	Mat image=imread(pathFirst);
 	//Show
 	cv::namedWindow("normal", WINDOW_AUTOSIZE);
 	imshow("normal", image);
+	alg = BRISK::create();
+
 	map<string, vector<uchar>> descriptors;
 	batch_extractor(imagespath, &descriptors);
 	string nameImage=match(&descriptors, pathFirst);
 
 	cout << nameImage;
 	waitKey();
-	//string foundImagePath = path + nameImage;
-	//cv::namedWindow("found", WINDOW_AUTOSIZE);
-	//imshow("found", foundImagePath);
-
 
     return 0;
 }

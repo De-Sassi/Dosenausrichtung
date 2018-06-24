@@ -1,39 +1,3 @@
 ﻿  ImageMatching.cpp
-c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.11.25503\include\utility(139): warning C4244: 'initializing': conversion from 'const double' to 'int', possible loss of data
-  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.11.25503\include\xutility(944): note: see reference to function template instantiation 'std::pair<std::string,int>::pair<const _Kty,_Ty,void,0>(const std::pair<const _Kty,_Ty> &)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=double
-          ]
-  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.11.25503\include\xutility(944): note: see reference to function template instantiation 'std::pair<std::string,int>::pair<const _Kty,_Ty,void,0>(const std::pair<const _Kty,_Ty> &)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=double
-          ]
-  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.11.25503\include\algorithm(3615): note: see reference to function template instantiation 'bool std::_Debug_lt_pred<bool(__cdecl *&)(std::pair<std::string,int>,std::pair<std::string,int>),std::pair<const _Kty,_Ty>&,std::pair<const _Kty,_Ty>&>(_Pr,_Ty1,_Ty2,std::_Dbfile_t,std::_Dbline_t) noexcept(false)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=double,
-              _Pr=bool (__cdecl *&)(std::pair<std::string,int>,std::pair<std::string,int>),
-              _Ty1=std::pair<const std::string,double> &,
-              _Ty2=std::pair<const std::string,double> &
-          ]
-  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.11.25503\include\algorithm(3626): note: see reference to function template instantiation '_FwdIt std::_Min_element_unchecked<std::_Tree_unchecked_iterator<std::_Tree_val<std::_Tree_simple_types<_Ty>>>,bool(__cdecl *)(std::pair<std::string,int>,std::pair<std::string,int>)>(_FwdIt,_FwdIt,_Pr &)' being compiled
-          with
-          [
-              _FwdIt=std::_Tree_unchecked_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const std::string,double>>>>,
-              _Ty=std::pair<const std::string,double>,
-              _Pr=bool (__cdecl *)(std::pair<std::string,int>,std::pair<std::string,int>)
-          ]
-  c:\users\delia\source\repos\unrollingtin\imagematching\imagematching.cpp(99): note: see reference to function template instantiation '_FwdIt std::min_element<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<_Ty>>>,bool(__cdecl *)(std::pair<std::string,int>,std::pair<std::string,int>)>(_FwdIt,_FwdIt,_Pr)' being compiled
-          with
-          [
-              _FwdIt=std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const std::string,double>>>>,
-              _Ty=std::pair<const std::string,double>,
-              _Pr=bool (__cdecl *)(std::pair<std::string,int>,std::pair<std::string,int>)
-          ]
   ImageMatching.vcxproj -> C:\Users\delia\source\repos\UnrollingTin\x64\Debug\ImageMatching.exe
   ImageMatching.vcxproj -> C:\Users\delia\source\repos\UnrollingTin\x64\Debug\ImageMatching.pdb (Partial PDB)
