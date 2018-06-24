@@ -26,7 +26,6 @@ using namespace cv;
 using namespace std;
 
 
-Mat image;
 //adjust the path to the images save point
 //string path = "C:\\Users\\delia\\Desktop\\P4\\bver\\Bilder\\";
 //string path = "C:\\Users\\delia\\Desktop\\P4\\Dosenbilder22\\"; 
@@ -34,15 +33,15 @@ string path = "C:\\Users\\delia\\Desktop\\P4\\Dosenbilder23\\beer_WOB\\";
 
 
 //loads the image from memory and rescales it
-void loadImage(string imageName)
+void loadImage(string imageName, Mat *loadedImage)
 {
 	string name =path+imageName;
-	image = imread(name);
-	resize(image, image, Size(), 0.5, 0.5, CV_INTER_AREA);
+	*loadedImage = imread(name);
+	resize(*loadedImage, *loadedImage, Size(), 0.5, 0.5, CV_INTER_AREA);
 
 	//Show
 	cv::namedWindow("normal", WINDOW_AUTOSIZE);
-	imshow("normal", image);
+	imshow("normal", *loadedImage);
 }
 
 
@@ -151,6 +150,7 @@ void loadImage(string imageName)
 //	*rightUpper = getSmallestX(&right);
 //
 //}
+
 bool sortByFirstX(const Vec4i &lhs, const Vec4i &rhs)
 {
 	return lhs[0] < rhs[0];
@@ -236,6 +236,7 @@ void cutImage(Mat *image, Mat *cutImage/*, vector<vector<Point>> *contours*/)
 	imshow("cut", *cutImage);
 
 }
+
 //Expects the Image of a Tin. This tin gets flated with a transformation. But only x-Axis is considered
 void remapToFlat(Mat *image, Mat *flattedImage)
 {
@@ -270,84 +271,86 @@ void remapToFlat(Mat *image, Mat *flattedImage)
 }
 
 
-void remapInWorldcoordinates(Mat *image, Mat *flattedImage)
-{
-	//vom Bilddarstellung in Worldkoordinaten
-	//
-	float focal_length = 9; //in mm; aus spezifikation mit Objektiv (Fujinon 1:1.4/9mm HF9HA-1B
-	float pixel_size =4.65*pow(10,-3); //in mm; Kamera DFW-X710 Sony 
-	float f = focal_length/pixel_size;
-	float heigth = 99;//in mm Höhe Kamera mitte
-	float distance = 253;//in mm abstand von kamera bis LInse (müsste doch mit Chip sein nicht ?)
-
-
-	Mat mapx, mapy;
-	mapy.create(image->size(), CV_32FC1);
-	mapx.create(image->size(), CV_32FC1);
-
-
-	float h_x = (float)image->size().width / 2;
-	float h_y= (float)image->size().height / 2;
-	float b_z = 1;
-	float z = distance + b_z;
-	//afterwards for move the center to the middle
-	float c_x = (float)image->cols / 2;
-	int radius = image->size().width / 2;
-
-	for (int j = 0; j < image->rows; j++)//j=y
-	{
-		int test = 0;
-		if (j == 400)
-		{
-			test++;
-		}
-		for (int i = 0; i < image->cols; i++)//i=x
-		{
-			//New x is the arc length distanze from the center
-			float x_inWorld = (i*(z + distance) - h_x*z - h_x*distance) / f;
-			float new_x= (float)c_x - radius*sin((c_x - x_inWorld) / radius);
-			mapx.at<float>(j, i) = new_x;
-			float y_inWorld = (j*(z + distance) - h_y*distance - f*heigth - h_y*z) / f;
-			mapy.at<float>(j, i) = (float)y_inWorld;
-		}
-	}
-
-
-	remap(*image, *flattedImage, mapx, mapy, CV_INTER_LINEAR);
-
-	cv::namedWindow("flat", WINDOW_AUTOSIZE);
-	imshow("flat", *flattedImage);
-
-
-	//translationmatrix = [1, 0, 0, 0; 0, 1, 0, heigth; 0, 0, 1, distance; 0, 0, 0, 1];
-
-}
+//void remapInWorldcoordinates(Mat *image, Mat *flattedImage)
+//{
+//
+//	//does everything need to be in pixelmeasure? or not?
+//
+//
+//	//vom Bilddarstellung in Worldkoordinaten
+//	float focal_length = 9; //in mm; aus spezifikation mit Objektiv (Fujinon 1:1.4/9mm HF9HA-1B
+//	float pixel_size =(float)4.65*pow(10,-3); //in mm; Kamera DFW-X710 Sony 
+//	float f = focal_length/pixel_size;
+//	float h = 99;//in mm Höhe Kamera mitte
+//	float l = 253;//in mm abstand von kamera bis LInse (müsste doch mit Chip sein nicht ?)
+//	
+//	//mm->pixel
+//	h = h / pixel_size;
+//	l = l / pixel_size;
+//
+//	int H_x = image->size().height/2;
+//	int H_y = image->size().width / 2;
+//
+//
+//	int radius = image->size().width/2;
+//	int widthfinalImage=(int)(radius * M_PI);
+//	//Width final image -> 2*r*pi
+//	float c_x = widthfinalImage /2; //for shift of point zero
+//	float c_y = image->size().height;
+//
+//	*flattedImage = Mat::zeros(Size(widthfinalImage, image->rows), image->type());
+//	Mat mapx, mapy;
+//	mapy.create(flattedImage->size(), CV_32FC1);
+//	mapx.create(flattedImage->size(), CV_32FC1);
+//
+//	for (int j = 0; j < image->rows; j++)//j=y
+//	{
+//		for (int i = 0; i < image->cols; i++)//i=x
+//		{
+//
+//			//World coordinates
+//			float testsin = sin((c_x - i) / radius);
+//			float P_w_x = radius*testsin-c_x;
+//			float P_w_y = j-c_y; //evt c_y -j da ja y in postive richtug
+//			float testcos = cos((c_x - i) / radius);
+//			float P_w_z = -radius*testcos;
+//			//Camera cooridnates
+//			float P_c_x = P_w_x;
+//			float P_c_y = P_w_y + h;
+//			float P_c_z = P_w_z + l;
+//			//homogene image coordinates;
+//			float b_x = f*P_c_x / P_c_z + H_x;
+//			float b_y = f*P_c_y / P_c_z + H_y;
+//
+//			mapx.at<float>(j, i) = b_x;
+//			mapy.at<float>(j, i) = b_y;
+//		}
+//	}
+//
+//	remap(*image, *flattedImage, mapx, mapy, CV_INTER_LINEAR);
+//
+//	cv::namedWindow("flat", WINDOW_AUTOSIZE);
+//	imshow("flat", *flattedImage);
+//
+//
+//}
 
 
 int main()
 {
-	Mat /*mask,*/ cutedImage,flattedImage;
+	Mat  image,cutedImage,flattedImage;
+
+
 	
 	//vector<vector<Point>> contours;
-	loadImage("wob3.jpg");
-	cutImage(&image, &cutedImage);
-	remapToFlat(&cutedImage, &flattedImage);
-	//createMask(&image, &mask);
-	//edgeDetection(&image, &contours);
-	//cutImage(&image, &cutedImage, &contours);
-	//for(int i = 1; i <= 13; i++)
-	//{
-	//	string number = to_string(i);
-	//	loadImage(number+"Dose.jpg");
-	//	createMask(&image, &mask);
-	//	edgeDetection(&mask, &contours);
-	//	cutImage(&image, &cutedImage, &contours);
-	//	remapInWorldcoordinates(&cutedImage, &flattedImage);
-	//	//remapToFlat(&cutedImage, &flattedImage);
-	//	
-	//	imwrite(path+"flatted\\" + number +"flatNew.jpg", flattedImage);
-	//}
-
+	for (int i = 2; i <= 9; i++)
+	{
+		loadImage("wob"+ to_string(i)+".jpg", &image);
+		cutImage(&image, &cutedImage);
+	/*	remapToFlat(&cutedImage, &flattedImage);*/
+		imwrite(path+"cutted\\" + to_string(i) + "cut.jpg", cutedImage);
+		//remapInWorldcoordinates(&cutedImage, &flattedImage);
+	}
 
 	waitKey(0);
 	destroyAllWindows();
